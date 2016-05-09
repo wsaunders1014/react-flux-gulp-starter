@@ -11,6 +11,8 @@ import { provideContext } from 'fluxible-addons-react';
 
 const debug = d('App');
 
+window.App = window.App || {};
+
 if (window.App.env !== 'production') {
     d.enable('App, Fluxible, Fluxible:*');
 }
