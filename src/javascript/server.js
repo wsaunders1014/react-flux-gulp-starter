@@ -5,7 +5,6 @@ import d from 'debug';
 
 // Express
 import express from 'express';
-import expressState from 'express-state';
 import compression from 'compression';
 
 // React / App-level
@@ -23,76 +22,12 @@ import { createMemoryHistory } from 'react-router';
 import fetchRouteData from 'utils/fetchRouteData';
 
 const debug = d('Server');
-
 const server = express();
-
-expressState.extend(server);
-
 server.use(compression());
 server.use('/', express.static(path.resolve('./build')));
 
-server.use((req, res) => {
-    const location = createMemoryHistory().createLocation(req.url);
-    const context = app.createContext({
-        env: process.env.NODE_ENV || 'local',
-        siteUrl: process.env.SITE_URL || `${req.protocol}://${req.hostname}`,
-        // Uncomment this code to specify where on S3 remote assets are stored
-        // aws: {
-        //     bucket: process.env.S3_BUCKET || 'madeinhaus',
-        //     prefix: process.env.S3_PREFIX || 'react-flux-gulp-starter',
-        //     folder: process.env.S3_PATH || process.env.NODE_ENV || false,
-        //     urlHash: process.env.URL_HASH || false,
-        //     cloudfront: process.env.CLOUDFRONT_URL || false,
-        //     bypassCdn: req.query.bypass || false
-        // }
-    });
-
-    match({ routes, location }, (error, redirectLocation, renderProps) => {
-        if (redirectLocation) {
-            res.redirect(301, redirectLocation.pathname + redirectLocation.search);
-        } else if (error) {
-            res.status(500).send(error.message);
-        } else {
-            if (_.last(renderProps.routes).isNotFound) {
-                res.status(404);
-            }
-            fetchRouteData(context, renderProps)
-                .then(() => {
-                    const appState = app.dehydrate(context);
-                    appState.env = process.env.NODE_ENV || 'local';
-                    res.expose(appState, 'App');
-
-                    const props = Object.assign(
-                                        {},
-                                        renderProps,
-                                        { context: context.getComponentContext() }
-                                    );
-
-                    const RouterComponent = provideContext(RouterContext, app.customContexts);
-                    const HtmlComponent = provideContext(Html, app.customContexts);
-
-                    const markup = ReactDOMServer.renderToString(
-                                        React.createElement(RouterComponent, props)
-                                    );
-
-                    const html =
-                        ReactDOMServer.renderToStaticMarkup(
-                            React.createElement(HtmlComponent, {
-                                title: 'react-flux-gulp-starter - madeinhaus.com',
-                                context: context.getComponentContext(),
-                                state: res.locals.state,
-                                markup,
-                                location,
-                            }
-                        ));
-
-                    res.send(`<!DOCTYPE html>${html}`);
-                })
-                .catch(err => {
-                    res.status(500).send(err.stack);
-                });
-        }
-    });
+server.use('/', (req, res) => {
+    res.sendFile(path.resolve('./build/index.html'));
 });
 
 const port = process.env.PORT || 3000;

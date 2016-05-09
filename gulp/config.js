@@ -40,12 +40,13 @@ module.exports = {
         dest: dest
     },
     staticAssets: {
-        // Put an array of folder globs, such as src + '/**/fonts/**/*', 
+        // Put an array of folder globs, such as src + '/**/fonts/**/*',
         // src + '/**/html/**/*'
         src: [
+            src + '/html/**/*',
             // src + '/**/fonts/**/*',
             // src + '/**/html/**/*',
-        ], 
+        ],
         dest: dest
     },
     browserify: {
