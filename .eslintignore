@@ -1,3 +1,4 @@
 gulp
-src/javascript/libs
 src/html
+**/build
+**/src/javascript/libs/vendor/
