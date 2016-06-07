@@ -1,10 +1,10 @@
 // Utils
-import path from 'path';
-import d from 'debug';
+const path = require('path');
+const d = require('debug');
 
 // Express
-import express from 'express';
-import compression from 'compression';
+const express = require('express');
+const compression = require('compression');
 
 const debug = d('Server');
 const server = express();
