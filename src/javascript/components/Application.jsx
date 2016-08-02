@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Navigation from 'components/Navigation';
 import { connectToStores } from 'fluxible-addons-react';
+import styles from '../../sass/styles.scss';
 
 class Application extends React.Component {
 

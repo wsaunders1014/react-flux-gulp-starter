@@ -28,7 +28,6 @@ class Html extends React.Component {
                     <meta property="og:description" content="Description Here" />
                     <link rel="shortcut icon" href={this.context.assetUrl('/images/favicon.ico')} />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:400,600" />
-                    <link rel="stylesheet" href={this.context.assetUrl('/css/styles.css')} />
                 </head>
                 <body>
                     <div
@@ -36,9 +35,8 @@ class Html extends React.Component {
                         className="app"
                     >{this.props.children}</div>
                     <script dangerouslySetInnerHTML={{ __html: this.props.state }} />
-                    <script src={this.context.assetUrl('/js/modernizr-custom.js')} defer />
-                        <script src={this.context.assetUrl('/js/vendor.bundle.js')} defer />
-                    <script src={this.context.assetUrl('/js/client.js')} defer />
+                        <script src={this.context.assetUrl('/assets/vendor.bundle.js')} defer />
+                    <script src={this.context.assetUrl('/assets/client.js')} defer />
                 </body>
             </html>
         );

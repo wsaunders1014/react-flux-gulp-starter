@@ -10,6 +10,7 @@
   gulp/tasks/default.js specifies the default set of tasks to run
   when you run `gulp`.
 */
+require('babel-register');
 require('dotenv').load({ silent: true });
 
 var requireDir = require('require-dir');

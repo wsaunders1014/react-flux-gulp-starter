@@ -21,8 +21,6 @@ import routes from 'components/Routes.jsx';
 import { createMemoryHistory } from 'react-router';
 
 // Middleware
-import inlineStyles from 'middleware/inlineStyles';
-
 import fetchRouteData from 'utils/fetchRouteData';
 
 const debug = d('Server');
@@ -33,31 +31,7 @@ expressState.extend(server);
 
 server.use(compression());
 
-// proxy webpack dev server assets
-if(process.env.NODE_ENV === 'development'){
-    const httpProxy = require('http-proxy');
-    const proxy = httpProxy.createProxyServer();
-    server.all('/js/*', (req, res, next) => {
-
-        let _break = false;
-        ['modernizr'].forEach(exclude => {
-            if(req.url.includes(exclude)) _break = true;
-        });
-
-        if(_break) return next();
-
-        proxy.web(req, res, {
-            target: 'http://0.0.0.0:8080'
-        });
-        return;
-    });
-    proxy.on('error', (e) => {
-        console.log(`There was an error while connecting to the webpack dev server proxy. ${e}`);
-    });
-}
-
 server.use('/', express.static(path.resolve('./build')));
-server.use(inlineStyles('./build/css/inline.css'));
 
 server.use((req, res) => {
     const location = createMemoryHistory().createLocation(req.url);
