@@ -47,6 +47,8 @@ app.rehydrate(window.App, (err, context) => {
             }}
         >{routes}</RouterWithContext>,
         document.getElementById('app'),
-        () => { debug('React Rendered'); }
+        () => {
+            debug('React Rendered');
+        }
     );
 });

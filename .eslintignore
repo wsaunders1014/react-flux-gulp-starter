@@ -1,4 +1,4 @@
-gulp
 src/html
-**/build
+**/build/**
 **/src/javascript/libs/vendor/
+**/vendor/**
