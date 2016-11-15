@@ -1,13 +1,10 @@
 import Fluxible from 'fluxible';
 import { PropTypes } from 'react';
-import Routes from 'components/Routes.jsx';
 import ApplicationStore from 'stores/ApplicationStore';
 
 import assetUrl from 'libs/assetUrl';
 
-const app = new Fluxible({
-    component: Routes,
-});
+const app = new Fluxible();
 
 app.plug(assetUrl);
 

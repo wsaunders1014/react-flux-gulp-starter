@@ -1,7 +1,11 @@
 import d from 'debug';
+import polyfill from 'babel-polyfill'; // eslint-disable-line no-unused-vars
+
 import React from 'react';
 import { render } from 'react-dom';
 import { browserHistory } from 'react-router';
+import { AppContainer } from 'react-hot-loader';
+import fetchRouteData from 'utils/fetchRouteData';
 import app from './app';
 import Root from './Root';
 
@@ -15,25 +19,41 @@ if (window.App.env !== 'production') {
 
 debug('Rehydrating...');
 
-function init(context) {
-    const props = {
-        context: context.getComponentContext(),
-        history: browserHistory,
-    };
-
-    render(<Root {...props} />, document.getElementById('app'));
-}
-
 app.rehydrate(window.App, (err, context) => {
-
     if (err) {
         throw err;
     }
-
     debug('React Rendering');
-    init(context);
+    const rootEl = document.getElementById('app');
+    let isRehydrating = true;
+
+    function onUpdate() {
+        if (isRehydrating) {
+            isRehydrating = false;
+            return;
+        }
+        fetchRouteData(context, this.state)
+            .then(() => { /* emit an event? */ })
+            .catch(fetchDataErr => {
+                console.error(fetchDataErr.stack);
+            });
+    }
+
+    const renderProps = {
+        context: context.getComponentContext(),
+        history: browserHistory,
+        onUpdate,
+    };
+
+    render(
+        <AppContainer>
+            <Root {...renderProps}/>
+        </AppContainer>,
+        rootEl
+    );
 
     if (module.hot) {
+        console.log('module.hot enabled', module.hot);
       /**
        * Warning from React Router, caused by react-hot-loader.
        * The warning can be safely ignored, so filter it from the console.
@@ -49,15 +69,14 @@ app.rehydrate(window.App, (err, context) => {
         // };
 
         module.hot.accept('./Root', () => {
-            // If you use Webpack 2 in ES modules mode, you can
-            // use <App /> here rather than require() a <NextApp />.
-            // const NextApp = require('./Root').default;
-
-            console.log('reRender!');
-
-            // console.log(NextApp);
-
-            init(context);
+            render(
+                <AppContainer>
+                    <Root {...renderProps}/>
+                </AppContainer>,
+                rootEl
+            );
         });
     }
+
+
 });

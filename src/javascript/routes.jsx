@@ -7,13 +7,13 @@ import NotFound from 'components/NotFound';
 
 const about = (nextState, cb) => {
     require.ensure([], require => {
-        cb(null, require('./About.jsx').default);
+        cb(null, require('components/About.jsx').default);
     });
 }
 
 const contact = (nextState, cb) => {
     require.ensure([], require => {
-        cb(null, require('./Contact.jsx').default);
+        cb(null, require('components/Contact.jsx').default);
     });
 }
 

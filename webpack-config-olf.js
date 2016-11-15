@@ -7,18 +7,13 @@ const extend = require('extend');
 const babelLoader = {
     test: /(\.js|\.jsx)$/,
     exclude: /node_modules/,
-    loaders: ['babel'],
-}
-
-// hot loader for dev
-const hotLoader = Object.assign({}, babelLoader, {
-    loaders: ['react-hot'].concat(babelLoader.loaders)
-});
+    use: ['babel-loader'],
+};
 
 // transforms asset urls to hashes, and copies files to asset directory
 const urlLoader = {
     test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.woff2$|\.ttf$/,
-    loader: 'url?limit=8192'
+    loader: 'url-loader?limit=8192',
 };
 
 // same as url loader, but doesn't copy files to assets folder
@@ -28,30 +23,31 @@ const serverUrlLoader = Object.assign({}, urlLoader, {
 
 // css loader - local module naming convention
 const cssLoaderConfig =
-    `css-loader?sourceMap&-import&localIdentName=[name]_[local]_[hash:base64:3]&root=.`;
+    'css-loader?sourceMap&-import&localIdentName=[name]_[local]_[hash:base64:3]&root=.';
 
 // dev style loader
 const styleLoader = {
     test: /\.scss$/,
-    loaders: [
+    use: [
         'style-loader?sourceMap',
         cssLoaderConfig,
         'sass-loader?sourceMap',
     ],
 };
 
-
 // production style loader - extracts css into external file
 const extractTextLoader = {
     test: /\.scss$/,
-    loader: ExtractTextPlugin.extract('style-loader?', `${cssLoaderConfig}!sass-loader?`),
+    loader: ExtractTextPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: `${cssLoaderConfig}!sass-loader?`,
+    }),
 };
-
 
 // server-side style loader- only extracts class names, not css content
 const serverStyleLoader = {
     test: /\.scss$/,
-    loaders: [
+    use: [
         cssLoaderConfig.replace('css-loader', 'css-loader/locals'),
         'sass-loader',
     ],
@@ -61,50 +57,53 @@ const config = {
     context: path.resolve(__dirname),
 
     resolve: {
-        root: path.resolve(__dirname, 'src'),
-        modulesDirectories: ['node_modules'],
-        extensions: ['', '.js', '.jsx', '.json'],
+        modules: [
+            path.resolve(__dirname, 'src'),
+            'node_modules',
+        ],
+        extensions: ['.js', '.jsx', '.json'],
         alias: {
             sass: 'sass',
             images: 'images',
             './images': 'images',
-        }
+        },
     },
 
     plugins: [],
-
-    debug: true,
     cache: true,
 
     stats: {
-        assets: true, //add assets information
-        assetsSort: true, //(string) sort the assets by that fiel
-        cached: false, //add also information about cached (not built) modules
-        children: false, //add children information
-        chunkModules: false, //add built modules information to chunk information
-        chunkOrigins: false, //add the origins of chunks and chunk merging info
-        chunks: false, //add chunk information
-        chunksSort: false, //(string) sort the chunks by that field
+        assets: true, // add assets information
+        assetsSort: true, // (string) sort the assets by that fiel
+        cached: false, // add also information about cached (not built) modules
+        children: false, // add children information
+        chunkModules: false, // add built modules information to chunk information
+        chunkOrigins: false, // add the origins of chunks and chunk merging info
+        chunks: false, // add chunk information
+        chunksSort: false, // (string) sort the chunks by that field
         colors: true,
-        errorDetails: true, //add details to errors (like resolving log)
+        errorDetails: true, // add details to errors (like resolving log)
         errors: true,
-        hash: false, //add the hash of the compilation
-        modules: false, //add built modules information
-        modulesSort: true, //(string) sort the modules by that field
+        hash: false, // add the hash of the compilation
+        modules: false, // add built modules information
+        modulesSort: true, // (string) sort the modules by that field
         publicPath: false,
-        reasons: false, //add information about the reasons why modules are included
-        source: false, //add the source code of modules
-        timings: true, //add timing information
-        version: true, //add webpack version information
+        reasons: false, // add information about the reasons why modules are included
+        source: false, // add the source code of modules
+        timings: true, // add timing information
+        version: true, // add webpack version information
         warnings: false,
     },
 };
 
 export const clientDevConfig = extend(true, {}, config, {
+    devtool: '#eval-source-map',
     entry: {
         client: [
-            'webpack-dev-server/client?http://0.0.0.0:8080/',
-            'webpack/hot/only-dev-server',
+            // 'react-hot-loader/patch',
+            // 'webpack-dev-server/client?http://0.0.0.0:8080/',
+            // 'webpack/hot/only-dev-server',
+            'webpack-hot-middleware/client',
             './src/javascript/client.js',
         ],
         // leverage browser caching by saving react and react-dom to separate file
@@ -126,8 +125,8 @@ export const clientDevConfig = extend(true, {}, config, {
         filename: '[name].js',
     },
     module: {
-        loaders: [
-            hotLoader,
+        rules: [
+            babelLoader,
             styleLoader,
             urlLoader,
         ],
@@ -139,13 +138,18 @@ export const clientDevConfig = extend(true, {}, config, {
             children: true,
             // async: true,
             minChunks: Infinity,
-            filename: 'vendor.bundle.js'
+            filename: 'vendor.bundle.js',
         }),
-        new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.optimize.DedupePlugin(),
-        new ExtractTextPlugin('client.css'),
-    ],
-    devtool: '#eval-source-map',
+        new webpack.LoaderOptionsPlugin({
+            debug: true,
+            'NODE_ENV': JSON.stringify('development'),
+        }),
+        new ExtractTextPlugin({
+            filename: 'client.css',
+            disable: false,
+            allChunks: true,
+        }),
+    ]
 });
 
 export const clientConfig = extend(true, {}, config, {
@@ -153,15 +157,15 @@ export const clientConfig = extend(true, {}, config, {
         client: [
             './src/javascript/client.js',
         ],
-        vendor: clientDevConfig.entry.vendor
+        vendor: clientDevConfig.entry.vendor,
     },
     output: clientDevConfig.output,
     module: {
-        loaders: [
+        rules: [
             babelLoader,
             extractTextLoader,
-            urlLoader
-        ]
+            urlLoader,
+        ],
     },
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({
@@ -169,15 +173,22 @@ export const clientConfig = extend(true, {}, config, {
             children: true,
             // async: true,
             minChunks: Infinity,
-            filename: 'vendor.bundle.js'
+            filename: 'vendor.bundle.js',
         }),
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.optimize.DedupePlugin(),
-        new ExtractTextPlugin('client.css'),
-        new webpack.optimize.UglifyJsPlugin(),
+        new ExtractTextPlugin({
+            filename: 'client.css',
+            disable: false,
+            allChunks: true,
+        }),
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false,
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            sourceMap: true,
+        }),
     ],
-
-    debug: false,
 });
 
 //
@@ -186,7 +197,7 @@ export const clientConfig = extend(true, {}, config, {
 
 export const serverConfig = extend(true, {}, config, {
     entry: {
-        app: path.join(__dirname, 'src/javascript/server.js')
+        app: path.join(__dirname, 'src/javascript/server.js'),
     },
 
     output: {
@@ -199,18 +210,18 @@ export const serverConfig = extend(true, {}, config, {
     target: 'node',
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /(\.js|\.jsx)$/,
                 exclude: /node_modules/,
-                loader: 'babel',
-                query: {
+                loader: 'babel-loader',
+                options: {
                     presets: [
                         'react',
                         'node6',
-                        'stage-0'
-                    ]
-                }
+                        'stage-0',
+                    ],
+                },
             },
             serverUrlLoader,
             serverStyleLoader,
@@ -219,13 +230,11 @@ export const serverConfig = extend(true, {}, config, {
 
     externals: [
         function filter(context, request, cb) {
-            const isAsset = /^(images|css|font)/.test(request);
+            const isAsset = (/^(images|css|font)/).test(request);
             const isExternal = request.match(/^[@a-z][a-z\/\.\-0-9]*$/i);
 
             cb(null, !isAsset && Boolean(isExternal));
         },
     ],
-
-    debug: false,
     devtool: 'inline-eval-cheap-source-map',
 });
