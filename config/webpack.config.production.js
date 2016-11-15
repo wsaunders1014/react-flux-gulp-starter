@@ -15,14 +15,15 @@ const GLOBALS = {
 module.exports = merge(config, {
     // devtool: 'cheap-module-source-map',
     entry: {
-        client: 'client',
+        client: [
+            'client',
+        ],
         vendor: [
             'classnames',
             'debug',
             'fluxible',
             'fluxible-action-utils',
             'fluxible-addons-react',
-            'fluxible-plugin-fetchr',
             'react',
             'react-dom',
             'react-router',
@@ -34,7 +35,7 @@ module.exports = merge(config, {
             to: 'images',
         }]),
         // Avoid publishing files when compilation fails
-        // new webpack.NoErrorsPlugin(),
+        new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin(GLOBALS),
         new webpack.optimize.UglifyJsPlugin({
             // compress: {

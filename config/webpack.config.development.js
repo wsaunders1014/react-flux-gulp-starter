@@ -25,7 +25,6 @@ module.exports = merge(config, {
             'fluxible',
             'fluxible-action-utils',
             'fluxible-addons-react',
-            'fluxible-plugin-fetchr',
             'preact',
             'preact-compat',
             'react-router',
