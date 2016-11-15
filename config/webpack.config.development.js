@@ -45,7 +45,12 @@ module.exports = merge(config, {
                 ],
                 loaders: [
                     'style-loader',
-                    'css-loader',
+                    {
+                        loader: 'css-loader',
+                        query: {
+                            localIdentName: '[name]_[local]_[hash:base64:3]',
+                        },
+                    },
                     'postcss-loader', {
                         loader: 'sass-loader',
                         query: {

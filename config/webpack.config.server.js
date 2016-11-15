@@ -52,7 +52,13 @@ module.exports = merge({}, {
                     path.resolve(__dirname, '../src/sass'),
                 ],
                 loaders: [
-                    'css-loader/locals',
+                    {
+                        loader: 'css-loader/locals',
+                        query: {
+                            localIdentName: '[name]_[local]_[hash:base64:3]',
+                            sourceMap: false,
+                        },
+                    },
                     'postcss-loader', {
                         loader: 'sass-loader',
                         query: {

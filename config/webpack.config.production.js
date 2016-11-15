@@ -66,9 +66,11 @@ module.exports = merge(config, {
                 ],
                 loader: ExtractTextPlugin.extract({
                     fallbackLoader: 'style-loader',
-                    loader: [{
+                    loader: [
+                    {
                         loader: 'css-loader',
                         query: {
+                            localIdentName: '[name]_[local]_[hash:base64:3]',
                             sourceMap: false,
                         },
                     },
