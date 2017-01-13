@@ -21,14 +21,12 @@ module.exports = merge({}, {
             path.join(__dirname, '../src/assets'),
             'node_modules',
         ],
-        alias: {
-        },
         extensions: ['.js', '.jsx', '.json', '.scss'],
     },
 
     module: {
         noParse: /(\.min\.js|node_modules)$/,
-        loaders: [
+        rules: [
       // JavaScript / ES6
             {
                 test: /\.(js|jsx)?$/,
@@ -49,7 +47,7 @@ module.exports = merge({}, {
                 include: [
                     path.resolve(__dirname, '../src/sass'),
                 ],
-                loaders: [
+                use: [
                     {
                         loader: 'css-loader/locals',
                         query: {

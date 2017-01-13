@@ -35,14 +35,14 @@ module.exports = merge(config, {
         new webpack.DefinePlugin(GLOBALS),
     ],
     module: {
-        loaders: [
+        rules: [
             // Sass
             {
                 test: /\.scss$/,
                 include: [
                     path.resolve(__dirname, '../src/sass'),
                 ],
-                loaders: [
+                use: [
                     'style-loader',
                     {
                         loader: 'css-loader',
@@ -62,7 +62,7 @@ module.exports = merge(config, {
             // {
             //   test: /\.scss$/,
             //   include: /src\/client\/assets\/javascripts/,
-            //   loaders: [
+            //   use: [
             //     'style',
             //     {
             //       loader: 'css',

@@ -58,7 +58,7 @@ module.exports = merge(config, {
     ],
     module: {
         noParse: /\.min\.js$/,
-        loaders: [
+        rules: [
             // Sass
             {
                 test: /\.scss$/,
