@@ -20,8 +20,7 @@ module.exports = {
             'node_modules',
         ],
         alias: {
-            react: 'preact-compat',
-            'react-dom': 'preact-compat',
+
         },
         extensions: ['.js', '.jsx', '.json', '.scss'],
     },
@@ -43,8 +42,6 @@ module.exports = {
                 test: /\.(js|jsx|es6)?$/,
                 include: [
                     path.resolve(__dirname, '../src/javascript'),
-                    path.resolve(__dirname, '../node_modules/preact'),
-                    path.resolve(__dirname, '../node_modules/preact-compat'),
                 ],
                 loader: 'babel-loader',
             },

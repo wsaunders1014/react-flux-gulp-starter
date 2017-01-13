@@ -22,8 +22,6 @@ module.exports = merge({}, {
             'node_modules',
         ],
         alias: {
-            react: 'preact-compat',
-            'react-dom': 'preact-compat',
         },
         extensions: ['.js', '.jsx', '.json', '.scss'],
     },
