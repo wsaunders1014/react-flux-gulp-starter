@@ -36,7 +36,7 @@ module.exports = {
         }),
     ],
     module: {
-        loaders: [
+        rules: [
       // JavaScript / ES6
             {
                 test: /\.(js|jsx|es6)?$/,
