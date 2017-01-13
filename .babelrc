@@ -6,7 +6,19 @@
   ],
   "plugins": [
     "transform-decorators-legacy",
-    "transform-class-properties"
+    "transform-class-properties",
+    ["module-resolver", {
+      "root": ["./src/javascript"],
+      "alias": {
+        "actions": "actions",
+        "components": "components",
+        "config": "config",
+        "libs": "libs",
+        "stores": "stores",
+        "utils": "utils",
+        "middleware": "middleware"
+      }
+    }]
   ],
   "env": {
     "production": {
