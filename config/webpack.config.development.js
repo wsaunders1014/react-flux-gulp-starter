@@ -10,7 +10,7 @@ const GLOBALS = {
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'true')),
 };
 
-module.exports = merge(config, {
+module.exports = merge.smart(config, {
     cache: true,
     devtool: 'inline-source-map',
     entry: {

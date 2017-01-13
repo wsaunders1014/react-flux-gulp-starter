@@ -12,7 +12,7 @@ const GLOBALS = {
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false')),
 };
 
-module.exports = merge(config, {
+module.exports = merge.smart(config, {
     // devtool: 'cheap-module-source-map',
     entry: {
         client: [

@@ -1,4 +1,4 @@
-require('dotenv').load({ silent: true });
+require('dotenv').load();
 
 function devServer(app) {
     const webpack = require('webpack');

@@ -11,7 +11,7 @@ const GLOBALS = {
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false')),
 };
 
-module.exports = merge({}, {
+module.exports = merge.smart({}, {
     resolve: {
         modules: [
             path.join(__dirname, '../src/javascript'),
